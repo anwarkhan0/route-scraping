@@ -1,0 +1,31 @@
+{
+  "name": "route-scraping",
+  "version": "1.0.0",
+  "description": "route scraping aap.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "router",
+    "scrapper"
+  ],
+  "author": "Syed Anwar",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.5.1",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "html-to-text": "^9.0.5",
+    "jsdom": "^22.1.0",
+    "langchain": "^0.0.156",
+    "puppeteer": "^19.11.1",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.21.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
