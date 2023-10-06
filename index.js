@@ -29,6 +29,7 @@ app.post("/scrape", async (req, res) => {
     }); // returns (text: string) => string;
 
     // loading web pages
+    console.log('loading web pages');
     const loader = new RecursiveUrlLoader(url, {
       extractor: compiledConvert,
       maxDepth: 100,
@@ -40,15 +41,14 @@ app.post("/scrape", async (req, res) => {
     });
 
     const docs = await loader.load();
-    const scrappedData = [];
+    let scrappedData = [];
     
     for(let i = 0; i< docs.length; i++) {
       console.log('scraping =>>> ', docs[i].metadata.source + "\n");
       const data = await aiExtract(docs[i].pageContent);
-      scrappedData.push(data);
+      scrappedData = [...scrappedData, data];
     }
-    console.log(scrappedData);
-    res.json(scrappedData);
+    return res.json(scrappedData);
    
   } catch (error) {
     return res.sendStatus(500).json({ error: error.message });
