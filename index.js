@@ -8,6 +8,7 @@ import { config } from 'dotenv';
 
 import { aiExtract } from './aiExtracter.js';
 import { extractLinks } from './extractLinks.js';
+import { scrape } from './scrape.js';
 
 config();
 const app = express();
@@ -33,28 +34,36 @@ app.post("/scrape", async (req, res) => {
     // loading web pages
     console.log('loading web pages');
     const links = await extractLinks(url);
+
+
+    const contents = [];
+
+     for(let i = 0; i< links.length; i++){
+      console.log('processing..... ', links[i])
+      const loader = new RecursiveUrlLoader(links[i], {
+        extractor: compiledConvert,
+        maxDepth: 0,
+      });
+      const docs = await loader.load();
+      contents.push(docs[0].pageContent);
+    }
     
-    links.forEach( url => {
-      console.log('scrapping===========>>>>>>>', url);
-      
-    })
+    console.log(contents.length, ' pages loaded.');
 
+    console.log('Content Extraction started................');
 
-
-    const loader = new CheerioWebBaseLoader(
-      url,
-      {
-        selector: "a", // Select all anchor elements
+    const results = [];
+    for(let i = 0; i< contents.length; i++){
+      console.log('Extraction of page=>> ' + i + 1);
+      const result = await aiExtract(contents[i]);
+      if(result.route.length > 0){
+        results.push(result);
       }
-    );
-
-    const docs = await loader.load();
-
-    const hrefLinks = docs.map((doc) => doc.attr("href")); // Extract href attribute from each anchor element
-
-    console.log(hrefLinks);
+    }
     
-    res.sendStatus(200);
+    console.log('Content Extraction completed...............');
+     
+    return res.json(results);
    
   } catch (error) {
     return res.sendStatus(500).json({ error: error.message });

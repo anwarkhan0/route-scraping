@@ -6,6 +6,14 @@ function containsContactOrAbout(url) {
   return regex.test(url);
 }
 
+function isValidURL(url) {
+  // Regular expression for matching URLs
+  const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+
+  // Test if the provided string matches the URL pattern
+  return urlRegex.test(url);
+}
+
 export async function extractLinks(url) {
   try {
     const response = await axios.get(url);
@@ -17,9 +25,14 @@ export async function extractLinks(url) {
     const links = $("body a");
 
     // Extract the href attribute from each anchor tag.
-    const extractedLinks = links
-      .map((index, element) => $(element).attr("href"))
-      .get();
+    const extractedLinks = links.map((index, element) => {
+        const href = $(element).attr("href");
+        if (isValidURL(href)) {
+            console.log(href);
+            return href;
+        }
+        return null;
+    }).get();
 
     //exclude links
     const filteredLinks = extractedLinks.filter(

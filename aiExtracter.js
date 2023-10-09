@@ -63,7 +63,7 @@ export async function aiExtract(textContent){
         inputText: textContent,
       });
   
-      const jsonResponse = JSON.stringify(response, null, 2);
-      console.log(jsonResponse); 
+      // const jsonResponse = JSON.stringify(response, null, 2);
+      // console.log(jsonResponse); 
       return response;
 }
