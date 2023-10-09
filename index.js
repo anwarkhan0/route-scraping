@@ -54,7 +54,7 @@ app.post("/scrape", async (req, res) => {
 
     const results = [];
     for(let i = 0; i< contents.length; i++){
-      console.log('Extraction of page=>> ' + i + 1);
+      console.log('Extraction of page=>> ' + i);
       const result = await aiExtract(contents[i]);
       if(result.route.length > 0){
         results.push(result.route);
