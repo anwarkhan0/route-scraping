@@ -20,6 +20,7 @@ export async function aiExtract(textContent){
               price: z.number().describe("The Price of the route"),
               downpayment: z.number().describe("The down payment of the route"),
               weeklynet: z.number().optional().describe("The Weekly net income"),
+              description: z.string().optional().describe("The description of the route"),
               location: z.string().describe("Location of the route"),
             })
           )
