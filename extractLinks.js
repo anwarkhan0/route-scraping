@@ -2,7 +2,7 @@ import axios from "axios";
 import cheerio from "cheerio";
 
 function containsContactOrAbout(url) {
-  const regex = /(contact-us|about-us|faq|tel|contact|about)/i; // i flag for case-insensitive matching
+  const regex = /(contact-us|about-us)/i; // i flag for case-insensitive matching
   return regex.test(url);
 }
 
@@ -27,7 +27,7 @@ export async function extractLinks(url) {
     // Extract the href attribute from each anchor tag.
     const extractedLinks = links.map((index, element) => {
         const href = $(element).attr("href");
-        if (isValidURL(href)) {
+        if (isValidURL(href) && !href.includes("twitter") && !href.includes("google") && !href.includes("facebook")) {
             console.log(href);
             return href;
         }

@@ -1,10 +1,8 @@
-import { compile } from "html-to-text";
-import { RecursiveUrlLoader } from "langchain/document_loaders/web/recursive_url";
-import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
-
 import path from "path";
 import express from "express";
 import { config } from 'dotenv';
+import cheerio from "cheerio";
+import axios from "axios";
 
 import { aiExtract } from './aiExtracter.js';
 import { extractLinks } from './extractLinks.js';
@@ -25,39 +23,59 @@ app.post("/scrape", async (req, res) => {
 
   try {
     const url = req.body.url;
-    
-    const compiledConvert = compile({
-      wordwrap: 130,
-      selectors: [  { selector: 'a' }, { selector: "img", format: "skip" }],
-    }); // returns (text: string) => string;
 
     // loading web pages
     console.log('loading web pages');
     const links = await extractLinks(url);
-
-
+    
     const contents = [];
 
-     for(let i = 0; i< links.length; i++){
-      console.log('processing..... ', links[i])
-      const loader = new RecursiveUrlLoader(links[i], {
-        extractor: compiledConvert,
-        maxDepth: 0,
-      });
-      const docs = await loader.load();
-      contents.push(docs[0].pageContent);
+    for (const link of links) {
+      console.log("Processing...", link);
+
+      const axiosConfig = {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          "If-Modified-Since": "Thu, 01 Jan 1970 00:00:00 GMT",
+          "If-None-Match": "W/" + Math.random().toString(36).substr(2, 9),
+        },
+        timeout: 10000, // 10 seconds timeout
+      };
+
+      try {
+        const response = await axios.get(link, axiosConfig);
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        $("script").remove();
+        $("style").remove();
+
+        // Get the text content after removing scripts
+        const content = $("body").text();
+        contents.push(content);
+      } catch (error) {
+        console.error(`Error processing link ${link}: ${error.message}`);
+        continue;
+      }
     }
-    
+
+
     console.log(contents.length, ' pages loaded.');
 
     console.log('Content Extraction started................');
 
-    const results = [];
+    let results = [];
     for(let i = 0; i< contents.length; i++){
       console.log('Extraction of page=>> ' + i);
       const result = await aiExtract(contents[i]);
       if(result.route.length > 0){
-        results.push(result.route);
+        results = [...results, result.route];
       }
     }
     
