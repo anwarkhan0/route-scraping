@@ -43,6 +43,6 @@ export async function extractLinks(url) {
     return filteredLinks;
   } catch (error) {
     console.error("Error:", error);
-    throw error;
+    return [];
   }
 }
