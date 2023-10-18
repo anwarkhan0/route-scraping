@@ -4,9 +4,15 @@ import { config } from "dotenv";
 import cheerio from "cheerio";
 import axios from "axios";
 
+import { encode } from 'gpt-tokenizer';
+
 import { aiExtract } from "./aiExtracter.js";
 import { extractLinks } from "./extractLinks.js";
 import { scrape } from "./scrape.js";
+
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+
+
 
 config();
 const app = express();
@@ -48,7 +54,7 @@ app.post("/scrape", async (req, res) => {
             "If-Modified-Since": "Thu, 01 Jan 1970 00:00:00 GMT",
             "If-None-Match": "W/" + Math.random().toString(36).substr(2, 9),
           },
-          timeout: 1000000, // 10 seconds timeout
+          timeout: 100000, // 10 seconds timeout
         };
 
         try {
@@ -58,6 +64,10 @@ app.post("/scrape", async (req, res) => {
 
           $("script").remove();
           $("style").remove();
+          $("img").remove();
+          $("iframe").remove();
+          $("video").remove();
+          $("audio").remove();
 
           // Get the text content after removing scripts
           const content = $("body").text();
@@ -68,20 +78,48 @@ app.post("/scrape", async (req, res) => {
         }
       }
     } else {
-      return res.json({ error: "No links to process. Looks like the site is not accessible" });
+      return res.json({ message: "No links to process. Looks like the site is not accessible" });
     }
 
     console.log(contents.length, " pages loaded.");
 
     console.log("Content Extraction started................");
 
+    
     let results = [];
     for (let i = 0; i < contents.length; i++) {
       console.log("Extraction of page=>> " + i);
-      const result = await aiExtract(contents[i]);
-      if (result.route.length > 0) {
-        results = [...results, result.route];
+      const tokens = encode(contents[i]);
+      const tokenCount = tokens.length;
+
+      
+
+      if(tokenCount > 4000){
+        
+        const splitter = new RecursiveCharacterTextSplitter({
+          chunkSize: 2500,
+          chunkOverlap: 1,
+        });
+    
+        const docs = await splitter.createDocuments([contents[i]]);
+        
+        for (let i = 0; i < docs.length; i++) {
+          const result = await aiExtract(docs[i]);
+          if(result.route.length > 0){
+            results = [...results, result.route];
+          }
+        }
+         
+      }else{
+
+        
+        const result = await aiExtract(contents[i]);
+        if (result.route.length > 0) {
+          results = [...results, result.route];
+        }
+
       }
+      
     }
 
     console.log("Content Extraction completed...............");
