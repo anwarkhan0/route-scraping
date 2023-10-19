@@ -105,7 +105,7 @@ app.post("/scrape", async (req, res) => {
         
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
-          if(result.route.length > 0){
+          if(result){
             results = [...results, result.route];
           }
         }
@@ -114,7 +114,7 @@ app.post("/scrape", async (req, res) => {
 
         
         const result = await aiExtract(contents[i]);
-        if (result.route.length > 0) {
+        if (result) {
           results = [...results, result.route];
         }
 
