@@ -2,27 +2,21 @@ import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
 
 import { ChatOpenAI } from "langchain/chat_models/openai";
+import { HumanMessage, SystemMessage } from "langchain/schema";
 import {
   ChatPromptTemplate,
   SystemMessagePromptTemplate,
   HumanMessagePromptTemplate,
 } from "langchain/prompts";
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
+import { response } from "express";
 
 export async function aiExtract(textContent) {
   try {
     const zodSchema = z.object({
       route: z
         .array(
-          z.object({
-            route: z.string().describe("The name of the route"),
-            url: z.string().describe("The URL of the route"),
-            price: z.number().describe("The Price of the route"),
-            downpayment: z.number().describe("The down payment of the route"),
-            weeklynet: z.number().describe("The Weekly net income"),
-            description: z.string().describe("The description of the route"),
-            location: z.string().describe("Location of the route"),
-          })
+          z.object({})
         )
         .describe("An array of route sales mentioned in the text"),
     });
@@ -30,7 +24,7 @@ export async function aiExtract(textContent) {
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "List all route sales mentioned in the following text."
+          "find and List any route sales mentioned in the following text. if the contain no information then return null."
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],
@@ -65,9 +59,28 @@ export async function aiExtract(textContent) {
 
     // const jsonResponse = JSON.stringify(response, null, 2);
     // console.log(jsonResponse);
+
+    // const response = await llm.call([
+    //   new SystemMessage(
+    //     `Extract Route Sales information from the review text: 
+    //       information should in be an array containing objects for each route sale.
+    //       format for output:
+    //       [
+    //         {
+    //           // route information here
+    //         },
+    //         ...
+    //       ]
+          
+    //     If the information isn't present or the text is invalid, return null as the value.`
+    //   ),
+    //   new HumanMessage(`Review Text: ${textContent}`),
+    // ]);
+    // return response.content;
+
     return response;
   } catch (error) {
     console.log(error);
-    return [];
+    return false;
   }
 }

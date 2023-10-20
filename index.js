@@ -8,7 +8,7 @@ import { encode } from 'gpt-tokenizer';
 
 import { aiExtract } from "./aiExtracter.js";
 import { extractLinks } from "./extractLinks.js";
-import { scrape } from "./scrape.js";
+// import { scrape } from "./scrape.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
@@ -54,7 +54,7 @@ app.post("/scrape", async (req, res) => {
             "If-Modified-Since": "Thu, 01 Jan 1970 00:00:00 GMT",
             "If-None-Match": "W/" + Math.random().toString(36).substr(2, 9),
           },
-          timeout: 100000, // 10 seconds timeout
+          timeout: 100000,
         };
 
         try {
@@ -94,7 +94,7 @@ app.post("/scrape", async (req, res) => {
 
       
 
-      if(tokenCount > 4000){
+      if(tokenCount > 3000){
         
         const splitter = new RecursiveCharacterTextSplitter({
           chunkSize: 2500,
@@ -105,18 +105,15 @@ app.post("/scrape", async (req, res) => {
         
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
-          if(result){
-            results = [...results, result.route];
-          }
+          
+          if(result && result.route.length > 0) results = [...results, result.route]; 
+
         }
          
       }else{
 
-        
         const result = await aiExtract(contents[i]);
-        if (result) {
-          results = [...results, result.route];
-        }
+        if (result && result.route.length > 0) results = [...results, result.route];
 
       }
       

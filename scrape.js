@@ -1,16 +1,31 @@
-import cheerio from  "cheerio";
-import axios from "axios";
+const { firefox, webkit, chromium } = require('playwright');
 
-export async function scrape(url) {
-  console.log("loading =====>>>>", url);
-  const response = await axios.get(url);
-  const html = response.data;
+async function crawlSite(url) {
+    const browser = await chromium.launch();
+    const context = await browser.newContext();
+    const page = await context.newPage();
 
-  const $ = cheerio.load(html);
+    // Navigate to the initial URL
+    await page.goto(url);
 
-  $("script").remove();
-  $("img").remove();
+    // Extract links from the initial page
+    const links = await page.$$eval('a', anchors => anchors.map(anchor => anchor.href));
 
-  // return all the text from the HTML
-  return $("body").text();
+    // Process each link
+    for (const link of links) {
+        // Navigate to the link
+        await page.goto(link);
+
+        // Extract and process data from the page (you can modify this part based on your requirements)
+        const pageTitle = await page.title();
+        console.log(`Title of ${link}: ${pageTitle}`);
+
+        // Here you can extract other data, click buttons, fill forms, etc.
+    }
+
+    await browser.close();
 }
+
+// Example usage
+const targetUrl = 'https://example.com';
+crawlSite(targetUrl);
