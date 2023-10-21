@@ -106,22 +106,25 @@ app.post("/scrape", async (req, res) => {
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
           
-          if(result && result.route.length > 0) results = [...results, result.route]; 
+          if ( result ) results = [...results, result.route]; 
 
         }
          
       }else{
 
         const result = await aiExtract(contents[i]);
-        if (result && result.route.length > 0) results = [...results, result.route];
+        if ( result ) results = [...results, result.route];
 
       }
       
     }
 
     console.log("Content Extraction completed...............");
-
-    return res.json(results);
+    const filteredResult = results.filter((element) => {
+      return element.length > 0;
+    });
+    
+    return res.json(filteredResult);
   } catch (error) {
     console.error("Error:", error);
     return res.json({ error: error.message });

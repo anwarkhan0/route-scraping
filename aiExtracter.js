@@ -9,7 +9,7 @@ import {
   HumanMessagePromptTemplate,
 } from "langchain/prompts";
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
-import { response } from "express";
+
 
 export async function aiExtract(textContent) {
   try {
