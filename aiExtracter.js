@@ -81,6 +81,6 @@ export async function aiExtract(textContent) {
     return response;
   } catch (error) {
     console.log(error);
-    return false;
+    return [];
   }
 }

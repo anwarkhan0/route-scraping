@@ -106,14 +106,14 @@ app.post("/scrape", async (req, res) => {
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
           
-          if ( result ) results = [...results, result.route]; 
+          results = [...results, result.route]; 
 
         }
          
       }else{
 
         const result = await aiExtract(contents[i]);
-        if ( result ) results = [...results, result.route];
+        results = [...results, result.route];
 
       }
       
@@ -121,7 +121,7 @@ app.post("/scrape", async (req, res) => {
 
     console.log("Content Extraction completed...............");
     const filteredResult = results.filter((element) => {
-      return element.length > 0;
+      return element ? true : false;
     });
     
     return res.json(filteredResult);
