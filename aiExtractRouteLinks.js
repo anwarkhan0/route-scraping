@@ -22,7 +22,7 @@ export async function ExtractRouteLinks(textContent) {
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "You are Assistant to review text/array of links and find any route sales link or links which may linkt to more route sales from the text and return as array of links."
+          "You are an Assistant to review text/array of links and find any Route Distribution, or Direct Store Delivery (DSD), or Direct Sales, or Route-to-Market (RTM), or Vending Route, or Merchandising Route, related links and collect it from the text."
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],

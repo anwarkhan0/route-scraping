@@ -1,11 +1,6 @@
 import axios from "axios";
 import cheerio from "cheerio";
 
-function containsContactOrAbout(url) {
-  const regex = /(contact-us|about-us)/i; // i flag for case-insensitive matching
-  return regex.test(url);
-}
-
 function isValidURL(url) {
   // Regular expression for matching URLs
   const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -18,29 +13,22 @@ export async function extractLinks(url) {
   try {
     const response = await axios.get(url);
     const html = response.data;
-    // Load the HTML document into Cheerio.
     const $ = cheerio.load(html);
 
-    // Select all the anchor tags in the body element of the page.
-    const links = $("body a");
+    const links = [];
 
-    // Extract the href attribute from each anchor tag.
-    const extractedLinks = links.map((index, element) => {
-        const href = $(element).attr("href");
-        if (isValidURL(href) && !href.includes("twitter") && !href.includes("google") && !href.includes("facebook")) {
-            console.log(href);
-            return href;
-        }
-        return null;
-    }).get();
+    $("a").each((i, element) => {
+      const href = $(element).attr("href");
 
-    //exclude links
-    const filteredLinks = extractedLinks.filter(
-      (link) => !containsContactOrAbout(link)
-    );
+      if (href) {
+        links.push(href)
+        // isValidURL(href) ? links.push(href) : '';
+      }
+      
+    });
 
     // Return the array of extracted links.
-    return filteredLinks;
+    return links;
   } catch (error) {
     console.error("Error:", error);
     return [];

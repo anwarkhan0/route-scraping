@@ -1,11 +1,11 @@
-https://www.routesforsale.net
-https://www.mrrouteinc.com
-http://www.mrroutecarolinas.com
-http://www.mrroutemidatlantic.com
-https://www.mrroutesunstates.com
-http://www.mrroutetexas.com
-https://www.routebrokers.com/routes-for-sale
-https://www.pfroutes.com/en-US/search?facetstate=ny
+https://www.routesforsale.net blocked ip/country
+https://www.mrrouteinc.com passed
+http://www.mrroutecarolinas.com passed
+http://www.mrroutemidatlantic.com passed
+https://www.mrroutesunstates.com passed
+http://www.mrroutetexas.com passed
+https://www.routebrokers.com/routes-for-sale passed
+https://www.pfroutes.com/en-US/search?facetstate=ny pass
 https://listings.routeconsultant.com
 https://www.commercialroutesforsale.com/RouteList-State-NY.aspx
 https://www.routesrus.com
@@ -16,3 +16,4 @@ https://www.routeadvisors.com
 https://www.deliveryroutesforsale.com
 https://www.abbrokers.com
 https://www.theroutestore.com
+https://www.deliveryroutesforsale.com/

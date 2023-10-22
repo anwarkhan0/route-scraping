@@ -24,7 +24,7 @@ export async function aiExtract(textContent) {
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "find and List any route sales mentioned in the following text. if the contain no information then return null."
+          "find and List any route sales data mentioned in the following text, collect full information about each route. if the contain no information then return null."
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],
