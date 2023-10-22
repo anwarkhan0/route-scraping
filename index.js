@@ -8,6 +8,7 @@ import { encode } from 'gpt-tokenizer';
 
 import { aiExtract } from "./aiExtracter.js";
 import { extractLinks } from "./extractLinks.js";
+import { ExtractRouteLinks } from './aiExtractRouteLinks.js';
 // import { scrape } from "./scrape.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -32,11 +33,11 @@ app.post("/scrape", async (req, res) => {
     // loading web pages
     console.log("loading web pages");
     const links = await extractLinks(url);
-
+    const routeLinks = await ExtractRouteLinks(links);
     const contents = [];
 
-    if (links.length > 0) {
-      for (const link of links) {
+    if (routeLinks.data.length > 0) {
+      for (const link of routeLinks.data) {
         console.log("Processing...", link);
 
         const axiosConfig = {
@@ -48,13 +49,12 @@ app.post("/scrape", async (req, res) => {
             "Accept-Language": "en-US,en;q=0.9",
             "Accept-Encoding": "gzip, deflate, br",
             "Upgrade-Insecure-Requests": "1",
-            Connection: "keep-alive",
+            "Connection": "keep-alive",
             "Cache-Control": "no-cache",
-            Pragma: "no-cache",
+            "Pragma": "no-cache",
             "If-Modified-Since": "Thu, 01 Jan 1970 00:00:00 GMT",
             "If-None-Match": "W/" + Math.random().toString(36).substr(2, 9),
-          },
-          timeout: 100000,
+          }
         };
 
         try {
@@ -78,7 +78,7 @@ app.post("/scrape", async (req, res) => {
         }
       }
     } else {
-      return res.json({ message: "No links to process. Looks like the site is not accessible" });
+      return res.json({ message: "No links to process or the site is not accessible." });
     }
 
     console.log(contents.length, " pages loaded.");
@@ -106,25 +106,22 @@ app.post("/scrape", async (req, res) => {
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
           
-          results = [...results, result.route]; 
+          results = results.concat(result.routes || []); 
 
         }
          
       }else{
 
         const result = await aiExtract(contents[i]);
-        results = [...results, result.route];
+        results = results.concat(result.routes || []);
 
       }
       
     }
 
     console.log("Content Extraction completed...............");
-    const filteredResult = results.filter((element) => {
-      return element ? true : false;
-    });
     
-    return res.json(filteredResult);
+    return res.json({data: results});
   } catch (error) {
     console.error("Error:", error);
     return res.json({ error: error.message });

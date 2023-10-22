@@ -11,20 +11,18 @@ import {
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 
 
-export async function aiExtract(textContent) {
+export async function ExtractRouteLinks(textContent) {
   try {
     const zodSchema = z.object({
-      routes: z
-        .array(
-          z.object({})
-        )
-        .describe("An array of route sales mentioned in the text"),
+      data: z
+        .array(z.string())
+        .describe("An array of route sales links mentioned in the given text/array"),
     });
 
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "find and List any route sales mentioned in the following text. if the contain no information then return null."
+          "You are Assistant to review text/array of links and find any route sales link or links which may linkt to more route sales from the text and return as array of links."
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],
