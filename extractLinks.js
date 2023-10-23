@@ -1,15 +1,13 @@
 import axios from "axios";
 import cheerio from "cheerio";
 
-function isValidURL(url) {
-  // Regular expression for matching URLs
-  const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
-
-  // Test if the provided string matches the URL pattern
-  return urlRegex.test(url);
+// Check if a URL is relative
+function isRelativeUrl(url) {
+  const regex = /^((?:https?|ftp):\/\/)?[^\/\n]+(\/?.*)?$/;
+  return !regex.test(url);
 }
 
-export async function extractLinks(url) {
+export async function extractLinks(url, mainDomain) {
   try {
     const response = await axios.get(url);
     const html = response.data;
@@ -19,10 +17,8 @@ export async function extractLinks(url) {
 
     $("a").each((i, element) => {
       const href = $(element).attr("href");
-
       if (href) {
-        links.push(href)
-        // isValidURL(href) ? links.push(href) : '';
+        isRelativeUrl(href) ? links.push(`https://www.${mainDomain}${href}`) : links.push(href);
       }
       
     });

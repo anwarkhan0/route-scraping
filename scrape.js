@@ -22,6 +22,7 @@ export async function scrape(link) {
     };
 
     try {
+      await new Promise(resolve => setTimeout(resolve, 10000)); 
       const response = await axios.get(link, axiosConfig);
       const html = response.data;
       const $ = cheerio.load(html);

@@ -5,15 +5,14 @@ http://www.mrroutemidatlantic.com passed
 https://www.mrroutesunstates.com passed
 http://www.mrroutetexas.com passed
 https://www.routebrokers.com/routes-for-sale passed
-https://www.pfroutes.com/en-US/search?facetstate=ny pass
-https://listings.routeconsultant.com
-https://www.commercialroutesforsale.com/RouteList-State-NY.aspx
-https://www.routesrus.com
-https://www.vestedbb.com
-https://therouteexchange.com/routes-for-sale/
-https://www.snyderslanceibo.com
-https://www.routeadvisors.com
-https://www.deliveryroutesforsale.com
-https://www.abbrokers.com
-https://www.theroutestore.com
-https://www.deliveryroutesforsale.com/
+https://www.pfroutes.com/en-US/search?facetstate=ny passed
+https://listings.routeconsultant.com passed
+https://www.commercialroutesforsale.com/RouteList-State-NY.aspx fairly passed
+https://www.routesrus.com passed but limited access to the site may be site got suspecious
+https://www.vestedbb.com passed
+https://therouteexchange.com/routes-for-sale/ passed
+https://www.snyderslanceibo.com passed
+https://www.routeadvisors.com passed
+https://www.deliveryroutesforsale.com passed
+https://www.abbrokers.com unknown reason to access
+https://www.theroutestore.com blocked
