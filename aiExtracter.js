@@ -18,13 +18,13 @@ export async function aiExtract(textContent) {
         .array(
           z.object({})
         )
-        .describe("An array of route sales mentioned in the text"),
+        .describe("An array of route sales mentioned in the text. where each route object must have page url, location and other properties which are found."),
     });
 
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "find and List any route sales data mentioned in the following text, collect full information about each route. if the contain no information then return null."
+          "find and List any route sales data mentioned in the following text, collect full information, do not miss any information about each route. if the text contain no information then return null."
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],

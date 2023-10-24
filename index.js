@@ -7,11 +7,10 @@ import { encode } from "gpt-tokenizer";
 
 import { aiExtract } from "./aiExtracter.js";
 import { extractLinks } from "./extractLinks.js";
-import { ExtractRouteLinks } from "./aiExtractRouteLinks.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
-import { splitArrayInto4Pieces } from './utils.js';
+import { fitlerLinks } from './utils.js';
 
 config();
 const app = express();
@@ -27,9 +26,9 @@ app.get("/", (req, res) => {
 
 app.post("/scrape", async (req, res) => {
   try {
-    const url = req.body.url;
-    if (!url) {
-      res.status(400).json({ message: 'Missing URL' });
+    const { url, identifier }  = req.body;
+    if (!url || !identifier) {
+      res.status(400).json({ message: 'Missing URL or Identifier' });
       return;
     }
 
@@ -39,30 +38,23 @@ app.post("/scrape", async (req, res) => {
     const links = await extractLinks(url, mainDomain);
 
     console.log('links collected');
-    let routeLinks = [];
-    if (links.length > 50) {
-      const linksChunks = splitArrayInto4Pieces(links);
-      for (let i = 0; i < linksChunks.length; i++) {
-        const result = await ExtractRouteLinks(linksChunks[i]);
-        routeLinks = routeLinks.concat(result.data || []);
-      }
-    } else {
-      const result = await ExtractRouteLinks(links);
-      routeLinks = result.data;
-    }
-
-    console.log(routeLinks);
+   
     
+    const routeLinks = fitlerLinks(links, identifier);
+
+    console.log(routeLinks.length, 'links to scrape---------->');
+
+
     const contents = [];
 
-    const urlPage = await scrape(url);
-    contents.push(urlPage);
+    // const urlPage = await scrape(url);
+    // contents.push(urlPage);
 
     if (routeLinks.length > 0) {
       for (const link of routeLinks) {
         const data = await scrape(link);
         if (data) {
-          contents.push(data);
+          contents.push(`${data} + This Page URL is: ${link}`);
         }
       }
     }
@@ -89,7 +81,6 @@ app.post("/scrape", async (req, res) => {
 
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
-
           results = results.concat(result.routes || []);
         }
       } else {
