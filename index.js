@@ -1,7 +1,6 @@
 import path from "path";
 import express from "express";
 import { config } from "dotenv";
-import extractDomain from "extract-domain";
 
 import { encode } from "gpt-tokenizer";
 
@@ -32,18 +31,13 @@ app.post("/scrape", async (req, res) => {
       return;
     }
 
-    const mainDomain = extractDomain(url);
     // loading web pages
     console.log("collecting links.........");
-    const links = await extractLinks(url, mainDomain);
+    const links = await extractLinks(url);
 
-    console.log('links collected');
-   
-    
     const routeLinks = fitlerLinks(links, identifier);
 
-    console.log(routeLinks.length, 'links to scrape---------->');
-
+    console.log(routeLinks.length, 'routes found');
 
     const contents = [];
 
@@ -59,7 +53,7 @@ app.post("/scrape", async (req, res) => {
       }
     }
 
-    console.log(contents.length, " pages loaded.");
+    console.log(contents.length, "pages text saved.");
 
     console.log(
       "Content Extraction started from scrapped text................"
