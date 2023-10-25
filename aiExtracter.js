@@ -18,7 +18,7 @@ export async function aiExtract(textContent) {
         .array(
           z.object({})
         )
-        .describe("An array of route sales mentioned in the text. where each route object must have page url, location and other properties which are found."),
+        .describe("An array of route sales mentioned in the text. where each route object must have title ir name, page url, location and other properties which are found."),
     });
 
     const prompt = new ChatPromptTemplate({
