@@ -97,7 +97,7 @@ app.post("/scrape", async (req, res) => {
 
     console.log("Content Extraction completed...............");
 
-    results.forEach((route) => {
+    results.forEach( async (route) => {
       console.log(route);
       const data = {
         title: route.title,
@@ -105,7 +105,13 @@ app.post("/scrape", async (req, res) => {
         location: route.location,
         other_content: JSON.stringify(route),
       };
-      createRoute(data);
+
+      try {
+        await createRoute(data);
+      } catch (error) {
+        console.error(`Error creating route for ${route.title}:`, error);
+      }
+
     });
 
     return res.json({ data: results });
