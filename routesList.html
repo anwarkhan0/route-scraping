@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Routes List</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Routes List</h1>
+    <div id="routes"></div>
+
+    <script>
+        $(document).ready(function() {
+            $.get("http://localhost:3000/routes", function(data) {
+                var routes = data.data;
+                routes.forEach(function(route) {
+                    var routeElement = "<div class='route'>";
+                    routeElement += "<h2>" + route.title + "</h2>";
+                    routeElement += "<p><strong>URL:</strong> " + route.url + "</p>";
+                    routeElement += "<p><strong>location:</strong> " + route.location + "</p>";
+                    routeElement += "<p><strong>Other Data:</strong> " + route.other_content + "</p>";
+                    routeElement += "</div>";
+                    $("#routes").append(routeElement);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

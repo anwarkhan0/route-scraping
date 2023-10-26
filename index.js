@@ -1,6 +1,8 @@
+import { config } from "dotenv";
+config();
+
 import path from "path";
 import express from "express";
-import { config } from "dotenv";
 
 import { encode } from "gpt-tokenizer";
 
@@ -9,9 +11,9 @@ import { extractLinks } from "./extractLinks.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
-import { fitlerLinks } from './utils.js';
+import { fitlerLinks } from "./utils.js";
+import { createRoute, getAllRoutes } from "./routesModel.js";
 
-config();
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -22,12 +24,16 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./mainPage.html"));
 });
 
+app.get("/display-routes", async (req, res) => {
+  res.sendFile(path.join(__dirname, "./routesList.html"));
+});
 
+//////////////// API's //////////////////
 app.post("/scrape", async (req, res) => {
   try {
-    const { url, identifier }  = req.body;
+    const { url, identifier } = req.body;
     if (!url || !identifier) {
-      res.status(400).json({ message: 'Missing URL or Identifier' });
+      res.status(400).json({ message: "Missing URL or Identifier" });
       return;
     }
 
@@ -37,7 +43,7 @@ app.post("/scrape", async (req, res) => {
 
     const routeLinks = fitlerLinks(links, identifier);
 
-    console.log(routeLinks.length, 'routes found');
+    console.log(routeLinks.length, "routes found");
 
     const contents = [];
 
@@ -62,6 +68,12 @@ app.post("/scrape", async (req, res) => {
     let results = [];
     for (let i = 0; i < contents.length; i++) {
       console.log("Extraction of page=>> " + i);
+
+      if (contents[i] === undefined) {
+        console.log(`contents[${i}] is undefined`);
+        continue;
+      }
+
       const tokens = encode(contents[i]);
       const tokenCount = tokens.length;
 
@@ -85,10 +97,36 @@ app.post("/scrape", async (req, res) => {
 
     console.log("Content Extraction completed...............");
 
+    results.forEach((route) => {
+      console.log(route);
+      const data = {
+        title: route.title,
+        url: route.page_url,
+        location: route.location,
+        other_content: JSON.stringify(route),
+      };
+      createRoute(data);
+    });
+
     return res.json({ data: results });
   } catch (error) {
     console.error("Error:", error);
     return res.json({ message: "Error while processing." });
+  }
+});
+
+app.get("/routes", async (req, res) => {
+  try {
+    const routes = await getAllRoutes();
+
+    if (!routes) {
+      throw new Error("Failed to get all routes");
+    }
+
+    return res.json({ data: routes });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.json({ message: "Error while fetching routes." });
   }
 });
 
