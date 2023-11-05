@@ -4,11 +4,9 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
-RUN npx install playwright
-
 # ---- Production ----
 FROM base AS production
 ENV NODE_ENV=production
 USER node
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["npx", "install", "playwright", "&&","node", "index.js"]
