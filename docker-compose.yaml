@@ -19,9 +19,10 @@ services:
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=routes_scrapes
+      - DB_HOST=routes_scrapes_db
       - DB_NAME=routes_scrapes
       - DB_USER=root
       - DB_PASS=cnsC61PPlRxOdh0-rt-secret
+    restart: always
 volumes:
   mysql-data:
