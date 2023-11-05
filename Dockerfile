@@ -4,6 +4,8 @@ COPY package*.json ./
 RUN npm ci
 COPY . .
 
+RUN npx install playwright
+
 # ---- Production ----
 FROM base AS production
 ENV NODE_ENV=production
