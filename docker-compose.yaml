@@ -6,19 +6,22 @@ services:
     ports:
       - 4000:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=login1234
+      - MYSQL_ROOT_PASSWORD=cnsC61PPlRxOdh0-rt-secret
+    volumes:
+      - mysql-data:/var/lib/mysql
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
   node-app:
-    image: node:18.18-alpine
-    restart: always
+    image: mrobot19/route-scraper:1.0.1
     ports:
       - 3000:3000
     environment:
-      - DB_HOST=routes_scrapes_db
+      - DB_HOST=routes_scrapes
       - DB_NAME=routes_scrapes
       - DB_USER=root
-      - DB_PASS=cnsC61PPlRxOdh0
+      - DB_PASS=cnsC61PPlRxOdh0-rt-secret
+volumes:
+  mysql-data:
