@@ -13,12 +13,24 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
 import { fitlerLinks } from "./utils.js";
 import { createRoute, getAllRoutes } from "./routesModel.js";
+import { sequelize } from './dbConfig.js';
 
+const port = process.env.port || 3000;
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
 const __dirname = process.cwd();
+
+app.use( async (req, res, next) => {
+  try{
+    await sequelize.authenticate();
+    next();
+  }catch(err){
+    console.log(err);
+    res.json({message: "Database Error."})
+  }
+})
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "./mainPage.html"));
@@ -136,6 +148,6 @@ app.get("/routes", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("running on port 3000");
 });
