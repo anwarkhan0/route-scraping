@@ -13,7 +13,7 @@ services:
     ports:
       - 8080:8080
   node-app:
-    image: routes-scraper
+    image: node:18.18-alpine
     restart: always
     ports:
       - 3000:3000
