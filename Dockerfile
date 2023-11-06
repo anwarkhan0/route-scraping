@@ -1,4 +1,9 @@
 FROM node:18.18-alpine AS base
+
+RUN apk add --no-cache --update sudo
+
+RUN echo "root ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/myuser
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
