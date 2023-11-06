@@ -24,5 +24,7 @@ services:
       - DB_USER=root
       - DB_PASS=cnsC61PPlRxOdh0-rt-secret
     restart: always
+    dns: 
+      - 8.8.8.8
 volumes:
   mysql-data:
