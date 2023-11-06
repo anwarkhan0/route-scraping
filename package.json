@@ -25,7 +25,6 @@
     "jsdom": "^22.1.0",
     "langchain": "^0.0.156",
     "mysql2": "^3.6.2",
-    "playwright": "^1.39.0",
     "puppeteer": "^19.11.1",
     "sequelize": "^6.33.0",
     "url-exists-deep": "^2.1.4",

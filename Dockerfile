@@ -9,4 +9,4 @@ FROM base AS production
 ENV NODE_ENV=production
 USER node
 EXPOSE 3000
-CMD ["npx", "install", "playwright", "&&","node", "index.js"]
+CMD ["node", "index.js"]

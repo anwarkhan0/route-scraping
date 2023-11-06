@@ -15,7 +15,7 @@ services:
     ports:
       - 8080:8080
   node-app:
-    image: mrobot19/routes-scraper:1.0.1
+    image: mrobot19/routes-scraper
     ports:
       - 3000:3000
     environment:
