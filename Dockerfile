@@ -1,8 +1,7 @@
 FROM node:18.18-alpine AS base
 
-RUN apk add --no-cache --update sudo
-
-RUN echo "root ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/myuser
+# Create user1 with sudo privileges
+RUN adduser -r -g root && echo "root ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/root
 
 WORKDIR /app
 COPY package*.json ./
@@ -12,7 +11,6 @@ COPY . .
 # ---- Production ----
 FROM base AS production
 ENV NODE_ENV=production
-USER root
 USER node
 EXPOSE 3000
 CMD ["node", "index.js"]
