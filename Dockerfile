@@ -12,6 +12,7 @@ COPY . .
 # ---- Production ----
 FROM base AS production
 ENV NODE_ENV=production
+USER root
 USER node
 EXPOSE 3000
 CMD ["node", "index.js"]
