@@ -33,7 +33,13 @@ const __dirname = process.cwd();
 // })
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "./mainPage.html"));
+  try {
+    res.sendFile(path.join(__dirname, "./mainPage.html"));
+  } catch (error) {
+    console.log(error)
+    res.send('page not found');
+  }
+  
 });
 
 // app.get("/display-routes", async (req, res) => {
