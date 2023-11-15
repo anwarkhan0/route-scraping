@@ -154,6 +154,6 @@ app.get("/", (req, res) => {
 //   }
 // });
 
-app.listen(port, () => {
-  console.log(`running on port ${port}`);
-});
+app.listen(port, "0.0.0.0", function() {
+  console.log("Listening on Port 3000");
+  });
