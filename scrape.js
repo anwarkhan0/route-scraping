@@ -1,24 +1,29 @@
-import cheerio from "cheerio";
-import axios from "axios";
+// import cheerio from "cheerio";
+// import axios from "axios";
+import { chromium } from "playwright";
 
-export async function scrape(url) {
-  console.log("scrapping text from...", url);
+export async function scrape(link) {
+  console.log("scrapping text from...", link);
 
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+    const browser = await chromium.launch();
+    const page = await browser.newPage();
+    await page.goto(link);
+
+    // Remove unwanted elements
+    await page.evaluate(() => {
+      let elements = document.querySelectorAll(
+        "script, style, img, iframe, video, audio"
+      );
+      for (let element of elements) {
+        element.remove();
       }
     });
-    const $ = cheerio.load(response.data);
 
-    // Remove specific tags
-    $("script, style, img, iframe, video, audio").remove();
-
-    // Extract text content from the body
-    const textContent = $("body").text().trim();
-    return textContent;
+    // Get the text content after removing scripts
+    const content = await page.evaluate(() => document.body.innerText);
+    await browser.close();
+    return content;
   } catch (error) {
     console.error(`Error processing link ${link}: ${error.message}`);
     return null;
