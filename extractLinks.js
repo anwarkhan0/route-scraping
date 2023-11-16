@@ -1,6 +1,6 @@
-// import axios from "axios";
-// import cheerio from "cheerio";
-import {chromium} from 'playwright';
+import axios from "axios";
+import cheerio from "cheerio";
+// import {chromium} from 'playwright';
 // Check if a URL is relative
 // function isRelativeUrl(url) {
 //   const regex = /^((?:https?|ftp):\/\/)?[^\/\n]+(\/?.*)?$/;
@@ -9,26 +9,15 @@ import {chromium} from 'playwright';
 
 export async function extractLinks(url) {
   try {
+    const response = await axios.get(url);
+    const html = response.data;
 
-    const browser = await chromium.launch();
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const $ = cheerio.load(html);
+    const links = $("a")
+      .map((i, el) => $(el).attr("href"))
+      .toArray();
 
-    // Navigate to the website
-    await page.goto(url);
-
-    // Wait for all network requests to finish (including dynamic content)
-    await page.waitForLoadState('load');
-
-    // Extract all links from the page
-    const links = await page.$$eval('a', links => links.map(link => link.href));
-
-    // Print the collected links
-    console.log('Collected Links:', links);
-
-    await browser.close();
-
-    // Return the array of extracted links.
+    console.log("Collected Links:", links);
     return links;
   } catch (error) {
     console.error("Error:", error);
