@@ -125,12 +125,13 @@ app.post("/scrape", async (req, res) => {
 
       try {
         await createRoute(data);
-        return res.status(200).json({ data: results });
       } catch (error) {
         console.error(`Error creating route for ${route.title}:`, error);
         return res.status(500).json({ message: "Oop's Database Error Occured " });
       }
     });
+
+    return res.status(200).json({ data: results });
 
   } catch (error) {
     console.error("Error:", error);
