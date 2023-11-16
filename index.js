@@ -13,7 +13,7 @@ import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
 import { fitlerLinks } from "./utils.js";
 import { createRoute, getAllRoutes } from "./routesModel.js";
-import { sequelize } from './dbConfig.js';
+import { sequelize } from "./dbConfig.js";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -22,24 +22,23 @@ app.use(express.urlencoded({ extended: true }));
 
 const __dirname = process.cwd();
 
-app.use( async (req, res, next) => {
-  try{
+app.use(async (req, res, next) => {
+  try {
     await sequelize.authenticate();
     next();
-  }catch(err){
+  } catch (err) {
     console.log(err);
-    res.json({message: "Database Error."})
+    res.json({ message: "Database Error." });
   }
-})
+});
 
 app.get("/", (req, res) => {
   try {
     res.sendFile(path.join(__dirname, "./mainPage.html"));
   } catch (error) {
-    console.log(error)
-    res.send('page not found');
+    console.log(error);
+    res.send("page not found");
   }
-  
 });
 
 app.get("/display-routes", async (req, res) => {
@@ -115,7 +114,7 @@ app.post("/scrape", async (req, res) => {
 
     console.log("Content Extraction completed...............");
 
-    results.forEach( async (route) => {
+    results.forEach(async (route) => {
       console.log(route);
       const data = {
         title: route.title,
@@ -129,7 +128,6 @@ app.post("/scrape", async (req, res) => {
       } catch (error) {
         console.error(`Error creating route for ${route.title}:`, error);
       }
-
     });
 
     return res.json({ data: results });
@@ -154,6 +152,6 @@ app.get("/routes", async (req, res) => {
   }
 });
 
-app.listen(port, "0.0.0.0", function() {
+app.listen(port, "0.0.0.0", function () {
   console.log(`Listening on Port ${port}`);
-  });
+});
