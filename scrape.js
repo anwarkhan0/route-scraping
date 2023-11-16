@@ -12,8 +12,6 @@ export async function scrape(link) {
     const $ = cheerio.load(html);
     $("script, style, img, iframe, video, audio").remove();
     const content = $(".content").html();
-
-    console.log(`Text content of ${link}: ${content}`);
     return content;
   } catch (error) {
     console.error(`Error processing link ${link}: ${error.message}`);

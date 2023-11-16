@@ -131,7 +131,11 @@ app.post("/scrape", async (req, res) => {
       }
     });
 
-    return res.status(200).json({ data: results });
+    if(results.length > 0){
+      return res.status(201).json({ message: 'rotues stored in Database.' });
+    }else{
+      return res.status(201).json({message: 'no routes were found'});
+    }
 
   } catch (error) {
     console.error("Error:", error);
