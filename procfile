@@ -1,2 +1,2 @@
-web: docker compose up
+web: npx playwright
 web: npm start
