@@ -1,6 +1,6 @@
 version: '3.1'
 services:
-  routes_scrapes_db:
+  db_server:
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
     ports:
@@ -14,17 +14,17 @@ services:
     restart: always
     ports:
       - 8080:8080
-  # node-app:
-  #   image: mrobot19/routes-scraper
-  #   ports:
-  #     - 3000:3000
-  #   environment:
-  #     - DB_HOST=routes_scrapes_db
-  #     - DB_NAME=routes_scrapes
-  #     - DB_USER=root
-  #     - DB_PASS=cnsC61PPlRxOdh0-rt-secret
-  #   restart: always
-  #   dns: 
-  #     - 8.8.8.8
+  node-app:
+    image: mrobot19/routes-scraper
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST=db_server
+      - DB_NAME=routes_scrapes
+      - DB_USER=root
+      - DB_PASS=cnsC61PPlRxOdh0-rt-secret
+    restart: always
+    dns: 
+      - 8.8.8.8
 volumes:
   mysql-data:

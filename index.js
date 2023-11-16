@@ -28,7 +28,7 @@ app.use(async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    res.json({ message: "Database Error." });
+    res.status(500).json({ message: "Database Error." });
   }
 });
 
@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./mainPage.html"));
   } catch (error) {
     console.log(error);
-    res.send("page not found");
+    res.status(401).send("page not found");
   }
 });
 
@@ -125,15 +125,16 @@ app.post("/scrape", async (req, res) => {
 
       try {
         await createRoute(data);
+        return res.status(200).json({ data: results });
       } catch (error) {
         console.error(`Error creating route for ${route.title}:`, error);
+        return res.status(500).json({ message: "Oop's Database Error Occured " });
       }
     });
 
-    return res.json({ data: results });
   } catch (error) {
     console.error("Error:", error);
-    return res.json({ message: "Error while processing." });
+    return res.status(500).json({ message: "Error while processing." });
   }
 });
 
@@ -145,10 +146,10 @@ app.get("/routes", async (req, res) => {
       throw new Error("Failed to get all routes");
     }
 
-    return res.json({ data: routes });
+    return res.status(200).json({ data: routes });
   } catch (error) {
     console.error("Error:", error);
-    return res.json({ message: "Error while fetching routes." });
+    return res.status(500).json({ message: "Error while fetching routes." });
   }
 });
 
