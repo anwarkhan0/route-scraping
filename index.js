@@ -74,6 +74,8 @@ app.post("/scrape", async (req, res) => {
           contents.push(`${data} + This Page URL is: ${link}`);
         }
       }
+    }else{
+      return res.status(201).json({message: 'no routes links found, if there are rooutes check identifier and try again.'})
     }
 
     console.log(contents.length, "pages text saved.");
@@ -124,10 +126,13 @@ app.post("/scrape", async (req, res) => {
       };
 
       try {
+
         await createRoute(data);
+
       } catch (error) {
+
         console.error(`Error creating route for ${route.title}:`, error);
-        return res.status(500).json({ message: "Oop's Database Error Occured " });
+
       }
     });
 
