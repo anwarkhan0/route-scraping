@@ -75,7 +75,7 @@ app.post("/scrape", async (req, res) => {
         }
       }
     }else{
-      return res.status(201).json({message: 'no routes links found, if there are rooutes check identifier and try again.'})
+      return res.status(201).json({message: 'no routes links found, if there are routes, check identifier and try again.'})
     }
 
     console.log(contents.length, "pages text saved.");
