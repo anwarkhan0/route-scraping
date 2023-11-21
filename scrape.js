@@ -16,7 +16,6 @@ export async function scrape(link) {
     const browser = await chromium.launch();
     const page = await browser.newPage();
 
-    page.setDefaultTimeout(2000);
 
     // Navigate to the target web page
     await page.goto(link);
