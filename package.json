@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
-    "heroku-cleanup": "yarn run playwright install [chromium | webkit ]",
+    "heroku-cleanup": "npm run playwright install [chromium | webkit ]",
     "dev": "nodemon index.js"
   },
   "keywords": [
