@@ -27,7 +27,6 @@
     "is-reachable": "^5.2.1",
     "jsdom": "^22.1.0",
     "langchain": "^0.0.156",
-    "playwright": "^1.40.0",
     "url-exists-deep": "^2.1.4",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.21.4"
