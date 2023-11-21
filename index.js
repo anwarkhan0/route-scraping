@@ -12,8 +12,7 @@ import { extractLinks } from "./extractLinks.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
 import { fitlerLinks } from "./utils.js";
-import { createRoute, getAllRoutes } from "./routesModel.js";
-import { sequelize } from "./dbConfig.js";
+
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -22,15 +21,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const __dirname = process.cwd();
 
-app.use(async (req, res, next) => {
-  try {
-    await sequelize.authenticate();
-    next();
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Database Error." });
-  }
-});
 
 app.get("/", (req, res) => {
   try {
@@ -75,7 +65,7 @@ app.post("/scrape", async (req, res) => {
         }
       }
     }else{
-      return res.status(201).json({message: 'no routes links found, if there are routes, check identifier and try again.'})
+      return res.status(201).json({message: 'No routes links found, if there are routes Links, Check identifier and try again.'})
     }
 
     console.log(contents.length, "pages text saved.");
@@ -116,50 +106,20 @@ app.post("/scrape", async (req, res) => {
 
     console.log("Content Extraction completed...............");
 
-    results.forEach(async (route) => {
-      console.log(route);
-      const data = {
-        title: route.title,
-        url: route.page_url,
-        location: route.location,
-        other_content: JSON.stringify(route),
-      };
+    if(results.length === 0) {
 
-      try {
+      return res.status(201).json({ message: 'No routes found on the pages..', data: results });
 
-        await createRoute(data);
-
-      } catch (error) {
-
-        console.error(`Error creating route for ${route.title}:`, error);
-
-      }
-    });
-
-    if(results.length > 0){
-      return res.status(201).json({ message: 'rotues stored in Database.' });
     }else{
-      return res.status(201).json({message: 'no routes were found'});
+
+      return res.status(201).json({ message: 'Rotues results found.', data: results });
+      
     }
+    
 
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ message: "Error while processing." });
-  }
-});
-
-app.get("/routes", async (req, res) => {
-  try {
-    const routes = await getAllRoutes();
-
-    if (!routes) {
-      throw new Error("Failed to get all routes");
-    }
-
-    return res.status(200).json({ data: routes });
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ message: "Error while fetching routes." });
   }
 });
 

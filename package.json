@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
+    "heroku-cleanup": "yarn run playwright install [chromium | webkit | firefox]",
     "dev": "nodemon index.js"
   },
   "keywords": [
@@ -27,8 +28,7 @@
     "is-reachable": "^5.2.1",
     "jsdom": "^22.1.0",
     "langchain": "^0.0.156",
-    "mysql2": "^3.6.2",
-    "sequelize": "^6.33.0",
+    "playwright": "^1.40.0",
     "url-exists-deep": "^2.1.4",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.21.4"
