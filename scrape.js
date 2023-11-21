@@ -1,6 +1,6 @@
 // import cheerio from "cheerio";
 // import axios from "axios";
-import { chromium } from "playwright";
+import { firefox } from "playwright";
 
 function genRandSecs() {
   const randomNumber = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
@@ -13,7 +13,7 @@ export async function scrape(link) {
 
   try {
 
-    const browser = await chromium.launch();
+    const browser = await firefox.launch();
     const page = await browser.newPage();
 
 

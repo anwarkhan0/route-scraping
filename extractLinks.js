@@ -1,16 +1,15 @@
 // import axios from "axios";
 // import cheerio from "cheerio";
-import {chromium} from 'playwright';
+import {firefox} from 'playwright';
 // Check if a URL is relative
 // function isRelativeUrl(url) {
 //   const regex = /^((?:https?|ftp):\/\/)?[^\/\n]+(\/?.*)?$/;
 //   return !regex.test(url);
 // }
-
 export async function extractLinks(url) {
   try {
 
-    const browser = await chromium.launch();
+    const browser = await firefox.launch();
     const page = await browser.newPage();
 
     // Navigate to the target web page
