@@ -36,9 +36,9 @@ app.get("/display-routes", async (req, res) => {
 });
 
 //////////////// API's //////////////////
-app.post("/scrape", async (req, res) => {
+app.get("/scrape", async (req, res) => {
   try {
-    const { url, identifier } = req.body;
+    const { url, identifier } = req.query;
     if (!url || !identifier) {
       res.status(400).json({ message: "Missing URL or Identifier" });
       return;
