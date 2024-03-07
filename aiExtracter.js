@@ -40,7 +40,8 @@ export async function aiExtract(textContent) {
             yearlyGross: The yearly gross income of the listing. or weeklyNet: The weekly gross income of the listing.
             cashFlow: The weekly net cash flow of the listing.
             financing: Details regarding financing options for the listing.
-            description: Generate new description mentioning the website domain name and details provided in the listing.
+            sold: check if the the listing is sold or not.
+            description: Generate new description mentioning only the website domain name not any links to the site and details provided in the listing.
             do not miss any information about route. if the text contain no information then return null.`
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
