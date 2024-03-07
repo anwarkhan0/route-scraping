@@ -7,12 +7,9 @@ import express from "express";
 import { encode } from "gpt-tokenizer";
 
 import { aiExtract } from "./aiExtracter.js";
-import { aiUpdateCheck } from './aiUpdateCheck.js';
-import { extractLinks } from "./extractLinks.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { scrape } from "./scrape.js";
-import { fitlerLinks } from "./utils.js";
 
 
 const port = process.env.PORT || 3000;
@@ -93,11 +90,11 @@ app.get("/scrape", async (req, res) => {
 
     if(results.length === 0) {
 
-      return res.status(201).json({ message: 'No routes found on the pages..', data: results });
+      return res.status(201).json({ message: 'No Listing found on the pages..', data: results });
 
     }else{
 
-      return res.status(201).json({ message: 'Rotues results found.', data: results });
+      return res.status(201).json({ message: 'Listing result found.', data: results });
       
     }
     
