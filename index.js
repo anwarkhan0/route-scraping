@@ -7,6 +7,7 @@ import express from "express";
 import { encode } from "gpt-tokenizer";
 
 import { aiExtract } from "./aiExtracter.js";
+import { aiUpdateCheck } from './aiUpdateCheck.js';
 import { extractLinks } from "./extractLinks.js";
 
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
@@ -22,14 +23,16 @@ app.use(express.urlencoded({ extended: true }));
 const __dirname = process.cwd();
 
 
+
 app.get("/", (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, "./mainPage.html"));
+    res.status(200).sendFile(path.join(__dirname, "./mainPage.html"));
   } catch (error) {
     console.log(error);
     res.status(401).send("page not found");
   }
 });
+
 
 app.get("/display-routes", async (req, res) => {
   res.sendFile(path.join(__dirname, "./routesList.html"));
@@ -38,52 +41,34 @@ app.get("/display-routes", async (req, res) => {
 //////////////// API's //////////////////
 app.get("/scrape", async (req, res) => {
   try {
-    const { url, identifier } = req.query;
-    if (!url || !identifier) {
-      res.status(400).json({ message: "Missing URL or Identifier" });
+    const { url } = req.query;
+    if (!url) {
+      res.status(400).json({ message: "Missing URL" });
       return;
     }
 
-    // loading web pages
-    console.log("collecting links.........");
-    const links = await extractLinks(url);
+    let data = await scrape(url);
 
-    const routeLinks = fitlerLinks(links, identifier);
-
-    console.log(routeLinks.length, "routes found");
-
-    const contents = [];
-
-    // const urlPage = await scrape(url);
-    // contents.push(urlPage);
-
-    if (routeLinks.length > 0) {
-      for (const link of routeLinks) {
-        const data = await scrape(link);
-        if (data) {
-          contents.push(`${data} + This Page URL is: ${link}`);
-        }
-      }
-    }else{
-      return res.status(201).json({message: 'No routes links found, if there are routes Links, Check identifier and try again.'})
+    if (!data) {
+      return res.status(404).json({ message: 'No data found' });
     }
-
-    console.log(contents.length, "pages text saved.");
 
     console.log(
       "Content Extraction started from scrapped text................"
     );
 
     let results = [];
-    for (let i = 0; i < contents.length; i++) {
-      console.log("Extraction of page=>> " + i);
+    // for (let i = 0; i < contents.length; i++) {
+      console.log("Extraction of page ");
 
-      if (contents[i] === undefined) {
-        console.log(`contents[${i}] is undefined`);
-        continue;
+      if (data === undefined) {
+        console.log(`data is undefined`);
+        // continue;
       }
 
-      const tokens = encode(contents[i]);
+      data+= 'Website = ' + url;
+
+      const tokens = encode(data);
       const tokenCount = tokens.length;
 
       if (tokenCount > 3000) {
@@ -92,17 +77,17 @@ app.get("/scrape", async (req, res) => {
           chunkOverlap: 1,
         });
 
-        const docs = await splitter.createDocuments([contents[i]]);
+        const docs = await splitter.createDocuments([data]);
 
         for (let i = 0; i < docs.length; i++) {
           const result = await aiExtract(docs[i]);
           results = results.concat(result.routes || []);
         }
       } else {
-        const result = await aiExtract(contents[i]);
+        const result = await aiExtract(data);
         results = results.concat(result.routes || []);
       }
-    }
+    // }
 
     console.log("Content Extraction completed...............");
 
@@ -122,6 +107,9 @@ app.get("/scrape", async (req, res) => {
     return res.status(500).json({ message: "Error while processing." });
   }
 });
+
+
+
 
 app.listen(port, "0.0.0.0", function () {
   console.log(`Listening on Port ${port}`);

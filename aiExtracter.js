@@ -10,21 +10,38 @@ import {
 } from "langchain/prompts";
 import { JsonOutputFunctionsParser } from "langchain/output_parsers";
 
-
 export async function aiExtract(textContent) {
   try {
     const zodSchema = z.object({
       routes: z
         .array(
-          z.object({})
+          z.object({
+            title: z.string().optional(),
+            location: z.string().optional(),
+            askingPrice: z.number().optional(),
+            grossIncome: z.number().optional(),
+            cashFlow: z.number().optional(),
+            financing: z.boolean().optional(),
+            sold: z.boolean().optional(),
+            description: z.string().optional(),
+          })
         )
-        .describe("An array of route sales mentioned in the text. where each route object must have title, page url, location and other properties, which are found. also look for description if found."),
+        .describe("An object of Business route information."),
     });
 
     const prompt = new ChatPromptTemplate({
       promptMessages: [
         SystemMessagePromptTemplate.fromTemplate(
-          "find and List any route sales data mentioned in the following text, collect full information, do not miss any information about each route. if the text contain no information then return null."
+          `Find any business/route sales data mentioned in the following text, collect full information, in the following format
+            title: The title of the listing.
+            location': The location of the listing.
+            askingPrice: The asking price of the listing.
+            choose one if yearly is available or weekly is available
+            yearlyGross: The yearly gross income of the listing. or weeklyNet: The weekly gross income of the listing.
+            cashFlow: The weekly net cash flow of the listing.
+            financing: Details regarding financing options for the listing.
+            description: Generate new description mentioning the website domain name and details provided in the listing.
+            do not miss any information about route. if the text contain no information then return null.`
         ),
         HumanMessagePromptTemplate.fromTemplate("{inputText}"),
       ],
@@ -56,7 +73,6 @@ export async function aiExtract(textContent) {
     const response = await chain.invoke({
       inputText: textContent,
     });
-
 
     return response;
   } catch (error) {
