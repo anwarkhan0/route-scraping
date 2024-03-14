@@ -51,7 +51,6 @@ app.get("/scrape", async (req, res) => {
     );
 
     let results = [];
-    // for (let i = 0; i < contents.length; i++) {
     console.log("Extraction of page ");
 
     if (data === undefined) {
