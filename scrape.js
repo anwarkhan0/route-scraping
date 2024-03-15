@@ -2,16 +2,13 @@ import cheerio from "cheerio";
 import axios from "axios";
 // import { firefox } from "playwright";
 
-function genRandSecs() {
-  const randomNumber = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
-  return randomNumber;
-}
-
 
 export async function scrape(link) {
   console.log("scrapping text from...", link);
 
   try {
+
+    // ------------------ Playwright Code ----------------------//////
 
     // const browser = await firefox.launch();
     // const page = await browser.newPage();
@@ -35,15 +32,22 @@ export async function scrape(link) {
 
     // await browser.close();
 
+    // return content;
+
+    //------------------- end -------------///
 
     const response = await axios.get(link);
-    const html = response.data;
+    const $ = cheerio.load(response.data);
 
-    const $ = cheerio.load(html);
-    $("script, style, img, iframe, video, audio").remove();
-    const content = $(".content").html();
+    // Remove all tags
+    $('body *').remove();
+
+    // Get the remaining text
+    const text = $.text().trim();
+
+    return text;
+
     
-    return content;
 
   } catch (error) {
     console.error(`Error processing link ${link}: ${error.message}`);
