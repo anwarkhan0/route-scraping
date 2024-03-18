@@ -7,12 +7,10 @@ export async function scrape(link) {
   console.log("scrapping text from...", link);
 
   try {
-
     // ------------------ Playwright Code ----------------------//////
 
     // const browser = await firefox.launch();
     // const page = await browser.newPage();
-
 
     // // Navigate to the target web page
     // await page.goto(link);
@@ -39,16 +37,15 @@ export async function scrape(link) {
     const response = await axios.get(link);
     const $ = cheerio.load(response.data);
 
-    // Remove all tags
-    $('body *').remove();
-
-    // Get the remaining text
-    const text = $.text().trim();
-
-    return text;
-
+    //remove extra tags
+    $("script, style, img, iframe, header, footer").remove();
     
 
+    // Combine text nodes, remove leading/trailing spaces, and collapse consecutive spaces
+    const text = $.text().replace(/\s\s+/g, " ").trim();
+
+    return text;
+    
   } catch (error) {
     console.error(`Error processing link ${link}: ${error.message}`);
     return null;
