@@ -41,15 +41,13 @@ This API collects business sales information from various websites, processes th
 
 ### API Endpoints
 
-- `POST /collect` - Submit a website URL for data collection
-- `GET /sales/{business_id}` - Retrieve collected sales data
-- `GET /search` - Search sales data with filters
+- `GET /scrape?example.com` - the api will filter out business information and return json object.
 
 ### Example Request
 ```bash
 curl -X POST "http://localhost:8000/collect" \
      -H "Content-Type: application/json" \
-     -d '{"url": "https://example-business.com/sales"}'
+     -d '{"url": "/scrape/example.com"}'
 ```
 
 ## Contributing
